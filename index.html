@@ -4,5 +4,22 @@
   <body>
     <h1>Welcome to AruKab</h1>
     <p>This is deployed via Vercel.</p>
+
+    <input id="prompt" type="text" placeholder="Type your question">
+    <button onclick="sendPrompt()">Ask GPT-5</button>
+    <pre id="result"></pre>
+
+    <script>
+      async function sendPrompt() {
+        const prompt = document.getElementById("prompt").value;
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+        document.getElementById("result").innerText = data.result;
+      }
+    </script>
   </body>
 </html>
