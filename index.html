@@ -5,21 +5,32 @@
     <h1>Welcome to AruKab</h1>
     <p>This is deployed via Vercel.</p>
 
-    <input id="prompt" type="text" placeholder="Type your question">
-    <button onclick="sendPrompt()">Ask GPT-5</button>
-    <pre id="result"></pre>
+    <div>
+      <label>Type your question</label><br>
+      <input id="prompt" type="text" placeholder="Type your question" style="width:60%">
+      <button id="ask">Ask GPT-5</button>
+    </div>
+
+    <pre id="result" style="background:#f4f4f4;padding:10px;margin-top:10px;"></pre>
 
     <script>
-      async function sendPrompt() {
+      document.getElementById("ask").addEventListener("click", async () => {
         const prompt = document.getElementById("prompt").value;
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt })
-        });
-        const data = await res.json();
-        document.getElementById("result").innerText = data.result;
-      }
+        if (!prompt) return alert("Write a question first");
+        document.getElementById("result").innerText = "Loading...";
+        try {
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+          });
+          const data = await res.json();
+          if (data.error) document.getElementById("result").innerText = "Error: " + data.error;
+          else document.getElementById("result").innerText = data.result || "(no result)";
+        } catch (e) {
+          document.getElementById("result").innerText = "Fetch error: " + e.message;
+        }
+      });
     </script>
   </body>
 </html>
